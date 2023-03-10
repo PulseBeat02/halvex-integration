@@ -1,5 +1,5 @@
 const {Client, GatewayIntentBits, Partials} = require("discord.js")
-const {token} = require('./credentials.json');
+const {TOKEN} = require('./credentials.json');
 const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 
-client.login(token).then(() => console.log('Successful log in!'));
+client.login(TOKEN).then(() => console.log('Successful log in!'));
