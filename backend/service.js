@@ -1,15 +1,20 @@
-const WHCS_USERNAME = require('./../credentials.json');
-const WHCS_PASSWORD = require('./../credentials.json');
+import RequestBuilder from './request.js'
+
+import {WHMCS_USERNAME} from '../index.js'
+import {WHMCS_PASSWORD} from '../index.js'
+
+getServices(6)
 
 function getServices(clientId) {
 
     const builder = new RequestBuilder()
         .addRequestParameter('action', 'GetClientsProducts')
-        .addRequestParameter('username', WHCS_USERNAME)
-        .addRequestParameter('password', WHCS_PASSWORD)
+        .addRequestParameter('username', WHMCS_USERNAME)
+        .addRequestParameter('password', WHMCS_PASSWORD)
         .addRequestParameter('clientid', clientId)
-        .addRequestParameter('responsetype', 'json');
+        .addRequestParameter('responsetype', 'json')
 
-    const request = new WHMCSRequest(builder.build())
+    const request = builder.build()
+
     return request.createRequest()
 }

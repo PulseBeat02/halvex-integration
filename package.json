@@ -4,8 +4,11 @@
   "author": "Halvex",
   "description": "Halvex Linker Bot",
   "main": "index.js",
+  "type": "module",
   "dependencies": {
     "discord-api-types": "^0.37.35",
-    "discord.js": "^14.7.1"
+    "discord.js": "^14.7.1",
+    "node-fetch": "^3.3.1",
+    "node-cron": "^3.0.2"
   }
 }

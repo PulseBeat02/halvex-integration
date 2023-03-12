@@ -1,13 +1,13 @@
-const Command = require('./command.js');
+import Command from './command.js'
 
-class VerifyCommand extends Command {
+export default class VerifyCommand extends Command {
 
     constructor() {
-        super("verify", "Verify your account", "/verify [Panel Username]", []);
+        super("verify", "Verify your account", "/verify [Panel Username]", [])
     }
 
-    public handle(interaction) {
-        super.handle(interaction);
+    handle(interaction) {
+        super.handle(interaction)
         const user = interaction.user
         const role = this.getActiveUserRole(user)
         if (this.getHalvexConnection(user)) {
@@ -15,7 +15,7 @@ class VerifyCommand extends Command {
         }
     }
 
-    private getHalvexConnection(user) {
+    getHalvexConnection(user) {
         const connections = user.connections
         connections.forEach(connection => {
             if (connection.type === "Halvex Connection") {
@@ -25,13 +25,13 @@ class VerifyCommand extends Command {
         return false
     }
 
-    private getActiveUserRole(user) {
+    getActiveUserRole(user) {
         const guild = user.guild
         const roles = guild.roles
         return roles.cache.find(r => r.name === "Active Client")
     }
 
-    private addRole(user, role) {
+    addRole(user, role) {
         user.roles.add(role)
     }
 }
