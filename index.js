@@ -1,14 +1,12 @@
 import {Client, GatewayIntentBits, Partials} from "discord.js";
+import credentials from "./credentials.json" assert {type: "json"};
 
-const credentials = require('./credentials.json')
-const JSON = JSON.parse(credentials)
+const TOKEN = credentials.token
+const WHMCS_API_ENDPOINT = credentials.whmcs_api_endpoint
+const WHMCS_USERNAME = credentials.whmcs_username
+const WHMCS_PASSWORD = credentials.whmcs_password
 
-const TOKEN = JSON.get('token')
-const WHMCS_API_ENDPOINT = JSON.get('whmcs_api_endpoint')
-const WHMCS_USERNAME = JSON.get('whmcs_username')
-const WHMCS_PASSWORD = JSON.get('whmcs_password')
+export {TOKEN, WHMCS_API_ENDPOINT, WHMCS_USERNAME, WHMCS_PASSWORD};
 
-export { TOKEN, WHMCS_API_ENDPOINT, WHMCS_USERNAME, WHMCS_PASSWORD };
-
-const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
+const client = new Client({intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel]});
 client.login(TOKEN).then(() => console.log('Successful log in!'));
