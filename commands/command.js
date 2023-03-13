@@ -17,7 +17,7 @@ export default class Command {
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
-            .setDefaultMemberPermissions(this.permission)
+            .setDefaultPermission(this.permission)
     }
 
     handle(interaction) {

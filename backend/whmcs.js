@@ -10,10 +10,10 @@ export default class WHMCSRequest {
 
     createRequest() {
         fetch(WHMCS_API_ENDPOINT, this.options)
-            .then(res => res.json())
-            .then(data => {
-                return JSON.parse(data)
-            })
-            .then(err => console.log(err))
+            .then(res => this.parseJson(res.json()))
+    }
+
+    parseJson(data) {
+        console.log(data)
     }
 }
