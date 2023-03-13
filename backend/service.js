@@ -1,20 +1,18 @@
 import WHMCSRequest from './whmcs.js'
 
-import {WHMCS_ACCESS_KEY} from '../index.js'
+console.log(getProducts(1))
 
-getServices(6)
+async function getProducts(clientid) {
 
-function getServices(clientId) {
+    const whmcs = new WHMCSRequest()
+    const params = {
+        action: 'GetClientsProducts',
+        clientid: clientid,
+    }
 
-    const request = new WHMCSRequest()
-    const promise = request.request('GetClientsProducts', 'GET', {
-        clientId: clientId,
-        responseType: 'json',
-        accessKey: WHMCS_ACCESS_KEY
-    })
+    const json = await whmcs.request(params)
 
-    return promise.then((response) => {
-        return response
-    })
+    console.log(json)
+
+    return json
 }
-
