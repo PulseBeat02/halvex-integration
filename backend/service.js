@@ -1,18 +1,16 @@
 import WHMCSRequest from './whmcs.js'
 
-console.log(getProducts(1))
+export default class WHMCSHandler {
+    async getProducts(clientid) {
 
-async function getProducts(clientid) {
+        const whmcs = new WHMCSRequest()
+        const params = {
+            action: 'GetClientsProducts',
+            clientid: clientid,
+        }
 
-    const whmcs = new WHMCSRequest()
-    const params = {
-        action: 'GetClientsProducts',
-        clientid: clientid,
+        return await Promise.resolve(whmcs.request(params)).then((res) => {
+            return res
+        })
     }
-
-    const json = await whmcs.request(params)
-
-    console.log(json)
-
-    return json
 }

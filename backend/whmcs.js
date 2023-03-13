@@ -4,7 +4,7 @@ import {WHMCS_API_ENDPOINT, WHMCS_IDENTIFIER, WHMCS_SECRET} from '../index.js'
 
 export default class WHMCSRequest {
 
-    async request(params) {
+    request(params) {
         const request = this.#createRequest()
         const url = WHMCS_API_ENDPOINT + "?" + this.#parseQueries(params)
         return fetch(url, request)
