@@ -1,5 +1,5 @@
 import fetch from "node-fetch"
-import config from '../config.js';
+import config from '../config.js'
 
 export default class WHMCSRequest {
 
@@ -10,7 +10,7 @@ export default class WHMCSRequest {
             .then((response) => response.json())
             .then((json) => {
                 return json
-            });
+            })
     }
 
     #parseQueries(headers) {
@@ -28,11 +28,17 @@ export default class WHMCSRequest {
     }
 
     #createRequest() {
+        const method = 'GET'
+        const header = this.#createHeader()
         return {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            method: method,
+            headers: header
+        }
+    }
+
+    #createHeader() {
+        return {
+            'Content-Type': 'application/json'
         }
     }
 }

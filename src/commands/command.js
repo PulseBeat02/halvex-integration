@@ -22,7 +22,6 @@ export default class Command {
 
     handle(interaction) {
         const user = interaction.user
-        const member = interaction.member
-        console.log("Received interaction from user " + user.username + " with id " + user.id + " and member " + member.displayName + " with id " + member.id + "")
+        console.log(`Received user interaction from ${user}`)
     }
 }
