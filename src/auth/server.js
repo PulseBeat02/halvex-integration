@@ -9,6 +9,9 @@ import config from '../config.js'
 export default class AuthenticationServer {
 
     constructor() {
+    }
+
+    start() {
         this.app = express()
         this.#setCookieParser()
         this.#addLinkedRole()

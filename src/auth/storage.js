@@ -1,8 +1,8 @@
 const tokens = new Map()
 const ids = new Map()
 
-export async function storeDiscordTokens(userId, tokens) {
-    await tokens.set(`discord-${userId}`, tokens)
+export async function storeDiscordTokens(userId, token) {
+    await tokens.set(`discord-${userId}`, token)
 }
 
 export async function getDiscordTokens(userId) {
