@@ -15,10 +15,8 @@ export default class TaskJob {
 
             const products = res["products"]
 
-
         })
     }
-
     #checkRole() {
 
     }

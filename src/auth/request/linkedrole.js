@@ -6,8 +6,8 @@ const MAX_AGE = 1000 * 60 * 5
 const AUTHORIZE_URL = 'https://discord.com/api/oauth2/authorize'
 export default class LinkedRoleRequest extends Request {
 
-    constructor(res) {
-        super(res);
+    constructor(req, res) {
+        super(req, res);
     }
 
     handleRequest() {

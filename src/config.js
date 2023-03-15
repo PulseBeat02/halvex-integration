@@ -1,16 +1,12 @@
 import * as dotenv from 'dotenv'
-import localtunnel from 'localtunnel';
 
-const tunnel = await localtunnel({ port: 3000 });
-const redirect_uri = tunnel.url + '/discord-oauth-callback';
-const verification_uri = tunnel.url + '/linked-role';
+dotenv.config()
 
-console.log('Redirect URL: ' + redirect_uri);
-console.log('Verification URL: ' + verification_uri);
+const redirect_uri = `http://localhost:${process.env.PORT}/discord-oauth-callback`;
+const verification_uri = `http://localhost:${process.env.PORT}/linked-role`;
 
-dotenv.config({
-    path: '../../.env'
-})
+console.log(`Redirect URL: ${redirect_uri}`);
+console.log(`Verification URL: ${verification_uri}`);
 
 const config = {
     DISCORD_TOKEN: process.env.DISCORD_TOKEN,
@@ -22,6 +18,7 @@ const config = {
     WHMCS_API_IDENTIFIER: process.env.WHMCS_API_IDENTIFIER,
     WHMCS_API_SECRET: process.env.WHMCS_API_SECRET,
     WHMCS_API_ACCESS_KEY: process.env.WHMCS_API_ACCESS_KEY,
+    PORT: process.env.PORT
 };
 
 export default config;
