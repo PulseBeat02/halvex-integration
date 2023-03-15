@@ -2,8 +2,8 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-const redirect_uri = `http://localhost:${process.env.PORT}/discord-oauth-callback`
-const verification_uri = `http://localhost:${process.env.PORT}/linked-role`
+const redirect_uri = `http://localhost:${process.env.DISCORD_PORT}/discord-oauth-callback`
+const verification_uri = `http://localhost:${process.env.DISCORD_PORT}/linked-role`
 
 console.log(`Redirect URL: ${redirect_uri}`)
 console.log(`Verification URL: ${verification_uri}`)

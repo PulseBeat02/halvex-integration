@@ -6,25 +6,45 @@ import OAuthCallbackRequest from './request/oauth.js'
 
 import config from '../config.js'
 
-const app = express()
-app.use(cookieParser(config.COOKIE_SECRET))
+export default class AuthenticationServer {
 
-app.get('/linked-role', async (req, res) => {
-    const request = new LinkedRoleRequest(req, res)
-    request.handleRequest()
-})
+    constructor() {
+        this.app = express()
+        this.#setCookieParser()
+        this.#addLinkedRole()
+        this.#addOauthCallback()
+        this.#addOauthMetaData()
+        this.#addListenPort()
+    }
 
-app.get('/discord-oauth-callback', async (req, res) => {
-    const request = new OAuthCallbackRequest(req, res)
-    await request.handleRequest()
-})
+    #setCookieParser() {
+        this.app.use(cookieParser(config.COOKIE_SECRET))
+    }
 
-app.post('/update-metadata', async (req, res) => {
-    const request = new UpdateMetaDataRequest(req, res)
-    await request.handleRequest()
-})
-app.listen(config.DISCORD_PORT, () => {
-    console.log(`Express app listening on ${config.DISCORD_PORT}`)
-})
+    #addLinkedRole() {
+        this.app.get('/linked-role', async (req, res) => {
+            const request = new LinkedRoleRequest(req, res)
+            await request.handleRequest()
+        })
+    }
 
+    #addOauthCallback() {
+        this.app.get('/discord-oauth-callback', async (req, res) => {
+            const request = new OAuthCallbackRequest(req, res)
+            await request.handleRequest()
+        })
+    }
 
+    #addOauthMetaData() {
+        this.app.post('/update-metadata', async (req, res) => {
+            const request = new UpdateMetaDataRequest(req, res)
+            await request.handleRequest()
+        })
+    }
+
+    #addListenPort() {
+        this.app.listen(config.DISCORD_PORT, () => {
+            console.log(`Express app listening on ${config.DISCORD_PORT}`)
+        })
+    }
+}

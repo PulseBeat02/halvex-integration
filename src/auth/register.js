@@ -11,9 +11,7 @@ const halvex = [
     }
 ]
 
-startServer()
-
-async function startServer() {
+export default async function createRequest() {
 
     const method = 'PUT'
     const body = JSON.stringify(halvex)
