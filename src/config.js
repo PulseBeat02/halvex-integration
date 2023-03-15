@@ -19,6 +19,8 @@ const config = {
     WHMCS_API_IDENTIFIER: process.env.WHMCS_API_IDENTIFIER,
     WHMCS_API_SECRET: process.env.WHMCS_API_SECRET,
     WHMCS_API_ACCESS_KEY: process.env.WHMCS_API_ACCESS_KEY,
+    WHMCS_OPENID_CLIENT_ID: process.env.WHMCS_OPENID_CLIENT_ID,
+    WHMCS_OPENID_CLIENT_SECRET: process.env.WHMCS_OPENID_CLIENT_SECRET,
 }
 
 export default config
