@@ -45,6 +45,12 @@ export default class AuthenticationServer {
         })
     }
 
+    #confirmWHMCSToken() {
+        this.app.post('/code', async (req, res) => {
+
+        })
+    }
+
     #addListenPort() {
         this.app.listen(config.DISCORD_PORT, () => {
             console.log(`Express app listening on ${config.DISCORD_PORT}`)
