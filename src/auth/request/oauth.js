@@ -27,6 +27,7 @@ export default class OAuthCallbackRequest extends Request {
             await this.updateMetadata(userId)
 
             const url = await this.#generateWHMCSUrl()
+            console.log(url)
             this.res.send(`<meta http-equiv="refresh" content="0; URL=${url}" />`)
 
         } catch (e) {

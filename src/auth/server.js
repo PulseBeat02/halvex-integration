@@ -48,7 +48,7 @@ export default class AuthenticationServer {
     }
 
     #confirmWHMCSToken() {
-        this.app.post('/code', async (req, res) => {
+        this.app.get('/code', async (req, res) => {
             const request = new WHMCSTokenRequest(req, res)
             await request.handleRequest()
         })

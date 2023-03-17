@@ -1,3 +1,4 @@
+import Request from './request.js'
 import * as storage from "../storage.js"
 
 export default class WHMCSTokenRequest extends Request {
@@ -9,7 +10,9 @@ export default class WHMCSTokenRequest extends Request {
     async handleRequest() {
         try {
 
-            const state = this.req.body.state
+            console.log(this.req.originalUrl)
+
+            const state = this.req.query.state
             if (!await this.#checkValidState(state)) {
                 this.res.sendStatus(403)
                 return
@@ -24,6 +27,7 @@ export default class WHMCSTokenRequest extends Request {
             this.res.sendStatus(204)
         } catch (e) {
             this.res.sendStatus(500)
+            console.log(e)
         }
     }
 
@@ -83,7 +87,7 @@ export default class WHMCSTokenRequest extends Request {
 
         const now = Date.now()
 
-        return expire < now;
+        return now < expire;
     }
 
 }
