@@ -49,7 +49,7 @@ export function generateUrl() {
     const params = new URLSearchParams();
     params.append("client_id", config.WHMCS_OPENID_CLIENT_ID);
     params.append("response_type", "code");
-    params.append("scope", "openid%20profile%20email&");
+    //params.append("scope", "openid%20profile%20email&");
     params.append("redirect_uri", WHMCS_CODE_URL);
     params.append("state", `security_token%3D${token}%26url%3D${DISCORD_VERIFICATION_URL}` );
 
