@@ -109,7 +109,6 @@ export default class OAuthCallbackRequest extends Request {
         params.append("response_type", "code")
         params.append("redirect_uri", WHMCS_CODE_URL)
         params.append("state", state)
-
         return params
     }
 
