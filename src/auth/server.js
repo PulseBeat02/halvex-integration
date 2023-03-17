@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser'
 import LinkedRoleRequest from './request/linkedrole.js'
 import UpdateMetaDataRequest from './request/updatemetadata.js'
 import OAuthCallbackRequest from './request/oauth.js'
+import WHMCSTokenRequest from './request/whmcstoken.js'
 
 import config from '../config.js'
 
@@ -18,6 +19,7 @@ export default class AuthenticationServer {
         this.#addOauthCallback()
         this.#addOauthMetaData()
         this.#addListenPort()
+        this.#confirmWHMCSToken()
     }
 
     #setCookieParser() {
@@ -47,7 +49,8 @@ export default class AuthenticationServer {
 
     #confirmWHMCSToken() {
         this.app.post('/code', async (req, res) => {
-
+            const request = new WHMCSTokenRequest(req, res)
+            await request.handleRequest()
         })
     }
 

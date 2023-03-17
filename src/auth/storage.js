@@ -1,5 +1,5 @@
 const tokens = new Map()
-const ids = new Map()
+const whmcs = new Map()
 
 export async function storeDiscordTokens(userId, token) {
     await tokens.set(`discord-${userId}`, token)
@@ -9,10 +9,11 @@ export async function getDiscordTokens(userId) {
     return tokens.get(`discord-${userId}`)
 }
 
-export async function storeClientId(userId, clientId) {
-    await ids.set(`discord-${userId}`, clientId)
+export async function storeAntiForgeryToken(token, expire) {
+    await whmcs.set(`whmcs-${token}`, expire)
 }
 
-export async function getClientId(userId) {
-    return ids.get(`discord-${userId}`)
+export async function getAntiForgeryToken(token) {
+    return whmcs.get(`whmcs-${token}`)
 }
+

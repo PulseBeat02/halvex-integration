@@ -1,7 +1,8 @@
 import Request from "./request.js"
 import * as storage from "../storage.js"
-import config from "../../config.js"
+import config, {DISCORD_VERIFICATION_URL, WHMCS_CODE_URL} from "../../config.js"
 import fetch from "node-fetch"
+import crypto from "crypto";
 
 const USER_OAUTH_URL = 'https://discord.com/api/v10/oauth2/@me'
 export default class OAuthCallbackRequest extends Request {
@@ -12,9 +13,11 @@ export default class OAuthCallbackRequest extends Request {
 
     async handleRequest() {
         try {
+
             if (this.#verifyCookies()) {
                 return this.res.sendStatus(403)
             }
+
             const code = this.req.query['code']
             const tokens = await this.getOAuthTokens(code)
             const meData = await this.getUserData(tokens)
@@ -22,7 +25,10 @@ export default class OAuthCallbackRequest extends Request {
             const now = Date.now()
             await this.#storeTokens(userId, tokens, now)
             await this.updateMetadata(userId)
-            this.res.send('You did it! Now go back to Discord.')
+
+            const url = await this.#generateWHMCSUrl()
+            this.res.send(`<meta http-equiv="refresh" content="0; URL=${url}" />`)
+
         } catch (e) {
             console.error(e)
             this.res.sendStatus(500)
@@ -82,5 +88,31 @@ export default class OAuthCallbackRequest extends Request {
                 Authorization: `Bearer ${tokens.access_token}`,
             },
         })
+    }
+
+    async #generateWHMCSUrl() {
+        const token = this.#generateWHMCSAntiForgeryToken()
+        const params = await this.#createURLSearchParams(token)
+        return config.WHMCS_AUTHORIZE_ENDPOINT + "?" + params
+    }
+
+    async #createURLSearchParams(token) {
+
+        const state = `security_token%3D${token}%26url%3D${DISCORD_VERIFICATION_URL}`
+        const now = Date.now()
+        const expire = now + 300000
+        await storage.storeAntiForgeryToken(token, expire)
+
+        const params = new URLSearchParams()
+        params.append("client_id", config.WHMCS_OPENID_CLIENT_ID)
+        params.append("response_type", "code")
+        params.append("redirect_uri", WHMCS_CODE_URL)
+        params.append("state", state)
+
+        return params
+    }
+
+    #generateWHMCSAntiForgeryToken() {
+        return crypto.randomBytes(32).toString("hex")
     }
 }
