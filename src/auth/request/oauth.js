@@ -28,7 +28,7 @@ export default class OAuthCallbackRequest extends Request {
 
             const url = await this.#generateWHMCSUrl()
             console.log(url)
-            this.res.send(`<meta http-equiv="refresh" content="0; URL=${url}" />`)
+            this.res.redirect(url)
 
         } catch (e) {
             console.error(e)
