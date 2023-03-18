@@ -100,16 +100,12 @@ export default class OAuthCallbackRequest extends Request {
     async #createURLSearchParams(token) {
 
         const state = `security_token%3D${token}%26url%3D${DISCORD_VERIFICATION_URL}`
+        const scope = 'openid%20profile%20email'
         const now = Date.now()
         const expire = now + 300000
         await storage.storeAntiForgeryToken(token, expire)
 
-        const params = new URLSearchParams()
-        params.append("client_id", config.WHMCS_OPENID_CLIENT_ID)
-        params.append("response_type", "code")
-        params.append("redirect_uri", WHMCS_CODE_URL)
-        params.append("state", state)
-        return params
+        return `client_id=${config.WHMCS_OPENID_CLIENT_ID}&response_type=code&scope=${scope}&redirect_uri=${WHMCS_CODE_URL}&state=${state}`
     }
 
     #generateWHMCSAntiForgeryToken() {

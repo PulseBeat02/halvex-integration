@@ -11,7 +11,6 @@ export default class WHMCSTokenRequest extends Request {
         try {
 
             const query = this.req.query
-
             const state = query.state
             if (!await this.#checkValidState(state)) {
                 this.res.sendStatus(403)
@@ -19,7 +18,15 @@ export default class WHMCSTokenRequest extends Request {
             }
 
             const code = query.code
+            if (code === undefined) {
+                this.res.sendStatus(403)
+                return
+            }
+
+            console.log(this.req.url)
+            console.log(code)
             // use code
+
 
             this.res.sendStatus(204)
         } catch (e) {
