@@ -27,7 +27,6 @@ export default class OAuthCallbackRequest extends Request {
             await this.updateMetadata(userId)
 
             const url = await this.#generateWHMCSUrl()
-            console.log(url)
             this.res.redirect(url)
 
         } catch (e) {
@@ -101,11 +100,8 @@ export default class OAuthCallbackRequest extends Request {
 
         const state = `security_token%3D${token}%26url%3D${DISCORD_VERIFICATION_URL}`
         const scope = 'openid%20profile%20email'
-        const now = Date.now()
-        const expire = now + 300000
-        await storage.storeAntiForgeryToken(token, expire)
-
         return `client_id=${config.WHMCS_OPENID_CLIENT_ID}&response_type=code&scope=${scope}&redirect_uri=${WHMCS_CODE_URL}&state=${state}`
+
     }
 
     #generateWHMCSAntiForgeryToken() {
