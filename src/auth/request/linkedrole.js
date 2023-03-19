@@ -7,7 +7,7 @@ const AUTHORIZE_URL = 'https://discord.com/api/oauth2/authorize'
 export default class LinkedRoleRequest extends Request {
 
     constructor(req, res) {
-        super(req, res)
+        super(req, res)  
     }
 
     handleRequest() {
