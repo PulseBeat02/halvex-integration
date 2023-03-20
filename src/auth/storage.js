@@ -15,7 +15,6 @@ export async function storeDiscordTokens(userId, token) {
 
 export async function getDiscordTokens(userId) {
     const token = decrypt(await tokens.get(`discord-${userId}`))
-    console.log(token)
     return JSON.parse(token)
 }
 
