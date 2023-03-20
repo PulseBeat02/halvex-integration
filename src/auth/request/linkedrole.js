@@ -3,7 +3,6 @@ import crypto from "crypto";
 import config from "../../config.js";
 
 const MAX_AGE = 1000 * 60 * 5;
-const AUTHORIZE_URL = "https://discord.com/api/oauth2/authorize";
 export default class LinkedRoleRequest extends Request {
   constructor(req, res) {
     super(req, res);
@@ -22,7 +21,7 @@ export default class LinkedRoleRequest extends Request {
   }
 
   #generateParameters(state) {
-    const url = new URL(AUTHORIZE_URL);
+    const url = new URL(config.DISCORD_OAUTH_AUTHORIZE_ENDPOINT);
     url.searchParams.set("client_id", config.DISCORD_CLIENT_ID);
     url.searchParams.set("redirect_uri", config.DISCORD_REDIRECT_URI);
     url.searchParams.set("response_type", "code");

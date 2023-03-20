@@ -1,7 +1,5 @@
 import fetch from "node-fetch";
 import config from "../config.js";
-import crypto from "crypto";
-import { WHMCS_CODE_URL, DISCORD_VERIFICATION_URL } from "../config.js";
 
 export default class WHMCSRequest {
   request(params) {

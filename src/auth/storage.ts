@@ -1,3 +1,4 @@
+// @ts-ignore
 import crypto from "crypto";
 
 const tokens = new Map();

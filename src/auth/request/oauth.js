@@ -7,7 +7,6 @@ import config, {
 import fetch from "node-fetch";
 import crypto from "crypto";
 
-const USER_OAUTH_URL = "https://discord.com/api/v10/oauth2/@me";
 export default class OAuthCallbackRequest extends Request {
   constructor(req, res) {
     super(req, res);
@@ -27,7 +26,7 @@ export default class OAuthCallbackRequest extends Request {
       await this.#storeTokens(userId, tokens, now);
       await this.updateMetadata(userId);
 
-      const url = await this.#generateWHMCSUrl();
+      const url = await this.#generateWHMCSUrl(userId);
       this.res.redirect(url);
     } catch (e) {
       console.error(e);
@@ -45,16 +44,16 @@ export default class OAuthCallbackRequest extends Request {
   }
 
   #storeTokens(userId, tokens, now) {
-    return storage.storeDiscordTokens(userId, {
+    return storage.storeToken(userId, {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
-      expires_at: now + tokens.expires_in * 1000,
+      expires_at: now + tokens['expires_in'] * 1000,
     });
   }
 
   async getOAuthTokens(code) {
     const body = this.getUrlSearchParams(code);
-    const response = await this.getResponse(this.oauthUrl, body);
+    const response = await this.getResponse(config.DISCORD_OAUTH_TOKEN_ENDPOINT, body);
     if (response.ok) {
       return await response.json();
     } else {
@@ -75,7 +74,7 @@ export default class OAuthCallbackRequest extends Request {
   }
 
   async getUserData(tokens) {
-    const response = await this.fetchBearer(USER_OAUTH_URL, tokens);
+    const response = await this.fetchBearer(config.DISCORD_OAUTH_SELF_ENDPOINT, tokens);
     if (response.ok) {
       return await response.json();
     } else {
@@ -93,9 +92,14 @@ export default class OAuthCallbackRequest extends Request {
     });
   }
 
-  async #generateWHMCSUrl() {
-    const token = this.#generateWHMCSAntiForgeryToken();
-    const params = await this.#createURLSearchParams(token);
+  async #generateWHMCSUrl(userId) {
+
+    const current = storage.getToken(userId)
+    const discord = current.discord
+    const whmcs = this.#generateWHMCSAntiForgeryToken();
+    await storage.storeToken(userId, discord, whmcs)
+
+    const params = await this.#createURLSearchParams(whmcs);
     return config.WHMCS_AUTHORIZE_ENDPOINT + "?" + params;
   }
 

@@ -1,14 +1,11 @@
 import fetch from "node-fetch";
 import * as storage from "../storage.ts";
 import config from "../../config.js";
-import WHMCSHandler from "./../../whmcs/service.js";
 
 export default class Request {
   constructor(req, res) {
     this.req = req;
     this.res = res;
-    this.oauthUrl = "https://discord.com/api/v10/oauth2/token";
-    this.whmcs = new WHMCSHandler();
   }
 
   handleRequest() {}
@@ -34,7 +31,7 @@ export default class Request {
   }
 
   async updateMetadata(userId) {
-    const tokens = await storage.getDiscordTokens(userId);
+    const tokens = await storage.getToken(userId);
 
     let metadata = {};
     try {
@@ -99,7 +96,7 @@ export default class Request {
 
   async #handleExpiredToken(tokens, userId) {
     const body = this.#createSearchParameters(tokens);
-    const response = await this.getResponse(this.oauthUrl, body);
+    const response = await this.getResponse(config.DISCORD_OAUTH_TOKEN_ENDPOINT, body);
     if (response.ok) {
       return await this.#refreshToken(response, userId);
     } else {
@@ -112,8 +109,8 @@ export default class Request {
   async #refreshToken(response, userId) {
     const tokens = await response.json();
     const now = Date.now();
-    tokens.expires_at = now + tokens.expires_in * 1000;
-    await storage.storeDiscordTokens(userId, tokens);
+    tokens.expires_at = now + tokens['expires_in'] * 1000;
+    await storage.storeToken(userId, tokens);
     return tokens.access_token;
   }
 

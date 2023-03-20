@@ -1,5 +1,4 @@
 import Request from "./request.js";
-import LinkedRoleRequest from "./linkedrole.js";
 import fetch from "node-fetch";
 import config, { WHMCS_CODE_URL } from "../../config.js";
 
@@ -17,7 +16,7 @@ export default class WHMCSTokenRequest extends Request {
       }
       const access_token = state.access_token;
       const json = await this.#getUserInfo(access_token);
-      const products = json.products;
+      const products = json['products'];
       console.log(products || "They have no products");
     } catch (e) {
       this.res.sendStatus(500);
@@ -49,7 +48,7 @@ export default class WHMCSTokenRequest extends Request {
     params.append("client_secret", config.WHMCS_OPENID_CLIENT_SECRET);
     params.append("redirect_uri", WHMCS_CODE_URL);
     params.append("grant_type", "authorization_code");
-    const code = await fetch("https://test.atheris.lol/oauth/token.php", {
+    const code = await fetch(config.WHMCS_API_TOKEN_ENDPOINT, {
       method: "POST",
       body: params,
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
