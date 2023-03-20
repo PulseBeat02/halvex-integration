@@ -1,36 +1,35 @@
-import fetch from 'node-fetch'
-import config from '../config.js'
+import fetch from "node-fetch";
+import config from "../config.js";
 
-const url = `https://discord.com/api/v10/applications/${config.DISCORD_CLIENT_ID}/role-connections/metadata`
+const url = `https://discord.com/api/v10/applications/${config.DISCORD_CLIENT_ID}/role-connections/metadata`;
 const halvex = [
-    {
-        key: 'services',
-        name: 'Halvex Service',
-        description: 'Services Greater Than 0',
-        type: 2,
-    }
-]
+  {
+    key: "services",
+    name: "Halvex Service",
+    description: "Services Greater Than 0",
+    type: 2,
+  },
+];
 
 export default async function createRequest() {
+  const method = "PUT";
+  const body = JSON.stringify(halvex);
+  const header = createHeader();
 
-    const method = 'PUT'
-    const body = JSON.stringify(halvex)
-    const header = createHeader()
+  const response = await fetch(url, {
+    method: method,
+    body: body,
+    headers: header,
+  });
 
-    const response = await fetch(url, {
-        method: method,
-        body: body,
-        headers: header,
-    })
-
-    console.log(response.ok ? await response.json() : await response.text())
+  console.log(response.ok ? await response.json() : await response.text());
 }
 
 function createHeader() {
-    const content = 'application/json'
-    const auth = `Bot ${config.DISCORD_TOKEN}`
-    return {
-        'Content-Type': content,
-        Authorization: auth,
-    }
+  const content = "application/json";
+  const auth = `Bot ${config.DISCORD_TOKEN}`;
+  return {
+    "Content-Type": content,
+    Authorization: auth,
+  };
 }
