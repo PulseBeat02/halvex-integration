@@ -1,5 +1,5 @@
 import Request from "./request.js";
-import * as storage from "../storage.ts";
+import * as storage from "../storage.js";
 import config, {
   DISCORD_VERIFICATION_URL,
   WHMCS_CODE_URL,

@@ -13,23 +13,14 @@ const halvex = [
 
 export default async function createRequest() {
   const method = "PUT";
-  const body = JSON.stringify(halvex);
-  const header = createHeader();
-
   const response = await fetch(url, {
     method: method,
-    body: body,
-    headers: header,
+    body: JSON.stringify(halvex),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bot ${config.DISCORD_TOKEN}`,
+    },
   });
 
   console.log(response.ok ? await response.json() : await response.text());
-}
-
-function createHeader() {
-  const content = "application/json";
-  const auth = `Bot ${config.DISCORD_TOKEN}`;
-  return {
-    "Content-Type": content,
-    Authorization: auth,
-  };
 }

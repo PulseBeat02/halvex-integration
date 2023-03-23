@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import * as storage from "../storage.ts";
+import * as storage from "../storage.js";
 import config from "../../config.js";
 
 export default class Request {
