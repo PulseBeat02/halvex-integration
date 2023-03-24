@@ -9,14 +9,15 @@ const key = crypto.randomBytes(32);
 const cipher = crypto.createCipheriv(algorithm, key, vector);
 const decipher = crypto.createDecipheriv(algorithm, key, vector);
 
-export async function storeToken({ userId, discord, whmcs=undefined}) {
+export async function storeToken(userId, discord, whmcs) {
   const token = { discord: { discord, userId }, whmcs, expire: Date.now()}
   const encrypted = encrypt(JSON.stringify(token))
   tokens.set(`token-${userId}`, encrypted)
 }
 
 export async function getToken(userId) {
-  const token = decrypt(await tokens.get(`token-${userId}`));
+  const data = await tokens.get(`token-${userId}`)
+  const token = decrypt(data);
   return JSON.parse(token);
 }
 

@@ -43,8 +43,8 @@ export default class OAuthCallbackRequest extends Request {
     }
   }
 
-  #storeTokens(userId, tokens, now) {
-    return storage.storeToken(userId, {
+  async #storeTokens(userId, tokens, now) {
+    await storage.storeToken(userId, {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       expires_at: now + tokens['expires_in'] * 1000,
