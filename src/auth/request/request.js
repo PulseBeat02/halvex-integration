@@ -31,7 +31,6 @@ export default class Request {
       "Content-Type": "application/x-www-form-urlencoded",
     };
   }
-
   async updateMetadata(userId) {
     try {
       const discordAccessToken = await storage.getDiscordToken(userId);
