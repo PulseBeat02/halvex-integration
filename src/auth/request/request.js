@@ -56,6 +56,7 @@ export default class Request {
       body,
       headers
     );
+
     if (!response.ok) {
       throw new Error(
         `Error pushing discord metadata: [${response.status}] ${response.statusText}`
@@ -87,11 +88,11 @@ export default class Request {
 
   async #getAccessToken(userId, tokens) {
     const now = Date.now();
-    const expire = tokens.expires_at;
+    const expire = tokens.discord_token.discord.expires_at;
     if (now > expire) {
       return await this.#handleExpiredToken(tokens, userId);
     }
-    return tokens.access_token;
+    return tokens.discord_token.discord.access_token;
   }
 
   async #handleExpiredToken(tokens, userId) {
