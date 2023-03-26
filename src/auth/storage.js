@@ -12,6 +12,7 @@ export async function setAccessToken(userId, whmcs) {
   const encrypted = encrypt(JSON.stringify(whmcs));
   whmcsAccessTokens.set(`whmcs-${userId}`, encrypted);
 }
+
 export async function getAccessToken(userId) {
   const data = await whmcsAccessTokens.get(`whmcs-${userId}`);
   if (data === undefined) {

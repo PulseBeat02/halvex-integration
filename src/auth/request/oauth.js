@@ -37,13 +37,16 @@ export default class OAuthCallbackRequest extends Request {
     await storage.storeDiscordToken(userId, {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
-      expires_at: now + tokens['expires_in'] * 1000,
+      expires_at: now + tokens["expires_in"] * 1000,
     });
   }
 
   async getOAuthTokens(code) {
     const body = this.getUrlSearchParams(code);
-    const response = await this.getResponse(config.DISCORD_OAUTH_TOKEN_ENDPOINT, body);
+    const response = await this.getResponse(
+      config.DISCORD_OAUTH_TOKEN_ENDPOINT,
+      body
+    );
     if (response.ok) {
       return await response.json();
     } else {
@@ -64,7 +67,10 @@ export default class OAuthCallbackRequest extends Request {
   }
 
   async getUserData(tokens) {
-    const response = await this.fetchBearer(config.DISCORD_OAUTH_SELF_ENDPOINT, tokens);
+    const response = await this.fetchBearer(
+      config.DISCORD_OAUTH_SELF_ENDPOINT,
+      tokens
+    );
     if (response.ok) {
       return await response.json();
     } else {

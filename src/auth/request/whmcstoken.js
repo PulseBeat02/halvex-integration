@@ -9,7 +9,6 @@ export default class WHMCSTokenRequest extends Request {
   }
 
   async handleRequest() {
-
     try {
       const query = this.req.query
       const code = query.code
@@ -17,11 +16,9 @@ export default class WHMCSTokenRequest extends Request {
       if (!state) {
         this.res.sendStatus("The token provided is invalid!");
       }
-
       const securityToken = await this.#getSecurityToken(query)
       const userId = await getWhmcsToDiscord(securityToken)
       const accessToken = state.access_token;
-
       await setAccessToken(userId, accessToken)
       await this.updateMetadata(userId)
     } catch (e) {

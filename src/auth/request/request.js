@@ -33,15 +33,8 @@ export default class Request {
   }
 
   async updateMetadata(userId) {
-
     try {
-
-      if (userId === undefined) {
-        return
-      }
-
       const discordAccessToken = await storage.getDiscordToken(userId);
-
       const whmcsAccessToken = await getAccessToken(userId)
       if (whmcsAccessToken === undefined) {
         const whmcs = await this.#generateWHMCSUrl(userId);
@@ -51,20 +44,15 @@ export default class Request {
         this.res.redirect(url);
         return
       }
-
       const json = await this.#getUserInfo(whmcsAccessToken);
       const products = Object.keys(json["products"]).length
-
       const metadata = {
         halvexservices: products
       };
-
       await this.#pushMetadata(userId, discordAccessToken, metadata);
-
     } catch (e) {
       this.res.sendStatus(500);
     }
-
   }
 
   async #getUserInfo(token) {
@@ -116,12 +104,12 @@ export default class Request {
       body,
       headers
     );
-    console.log(await response.json())
     if (!response.ok) {
       throw new Error(
         `Error pushing discord metadata: [${response.status}] ${response.statusText}`
       );
     }
+    this.req.send("Succesfully linked Halvex with Discord! Go back into your Discord to enjoy your role!")
   }
 
   #fetchMetaDataResponse(url, method, body, headers) {
