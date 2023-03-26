@@ -1,6 +1,7 @@
 import Request from "./request.js";
 import fetch from "node-fetch";
 import config, { WHMCS_CODE_URL } from "../../config.js";
+import {getWhmcsToDiscord, setAccessToken} from "../storage.js";
 
 export default class WHMCSTokenRequest extends Request {
   constructor(req, res) {
@@ -8,36 +9,30 @@ export default class WHMCSTokenRequest extends Request {
   }
 
   async handleRequest() {
+
     try {
-      const query = this.req.query;
-      const state = await this.#checkValidState(query.code);
+      const query = this.req.query
+      const code = query.code
+      const state = await this.#checkValidState(code);
       if (!state) {
         this.res.sendStatus("The token provided is invalid!");
       }
-      const access_token = state.access_token;
-      const json = await this.#getUserInfo(access_token);
-      const products = json['products'];
-      console.log(products || "They have no products");
+
+      const securityToken = await this.#getSecurityToken(query)
+      const userId = await getWhmcsToDiscord(securityToken)
+      const accessToken = state.access_token;
+
+      await setAccessToken(userId, accessToken)
+      await this.updateMetadata(userId)
     } catch (e) {
       this.res.sendStatus(500);
     }
   }
 
-  async #getUserInfo(token) {
-    const params = new URLSearchParams();
-    params.append("action", "GetClientsProducts");
-    params.append("identifier", config.WHMCS_API_IDENTIFIER);
-    params.append("secret", config.WHMCS_API_SECRET);
-    params.append("responsetype", "json");
-    const url = config.WHMCS_API_ENDPOINT + "?" + params;
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await response.text();
-    return JSON.parse(json);
+  async #getSecurityToken(query) {
+    const state = query.state
+    const params = new URLSearchParams(state);
+    return params.get("security_token")
   }
 
   async #checkValidState(query) {

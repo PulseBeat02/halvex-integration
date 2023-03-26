@@ -4,9 +4,9 @@ import config from "../config.js";
 const url = `https://discord.com/api/v10/applications/${config.DISCORD_CLIENT_ID}/role-connections/metadata`;
 const halvex = [
   {
-    key: "services",
-    name: "Halvex Service",
-    description: "Services Greater Than 0",
+    key: "halvexservices",
+    name: "Halvex Services",
+    description: "Halvex Services Greater Than",
     type: 2,
   },
 ];

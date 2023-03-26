@@ -7,7 +7,7 @@ export default class UpdateMetaDataRequest extends Request {
 
   async handleRequest() {
     try {
-      const userId = this.req.body.userId;
+      const userId = this.req.body["userId"];
       await this.updateMetadata(userId);
       this.res.sendStatus(204);
     } catch (e) {

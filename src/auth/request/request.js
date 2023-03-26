@@ -1,6 +1,8 @@
 import fetch from "node-fetch";
 import * as storage from "../storage.js";
-import config from "../../config.js";
+import config, {DISCORD_VERIFICATION_URL, WHMCS_CODE_URL} from "../../config.js";
+import crypto from "crypto";
+import {getAccessToken, setAccessToken, storeWhmcsToDiscord} from "../storage.js";
 
 export default class Request {
   constructor(req, res) {
@@ -31,17 +33,75 @@ export default class Request {
   }
 
   async updateMetadata(userId) {
-    const tokens = await storage.getToken(userId);
 
-    let metadata = {};
     try {
-      // TODO Get WHMCS Data
+
+      if (userId === undefined) {
+        return
+      }
+
+      const discordAccessToken = await storage.getDiscordToken(userId);
+
+      const whmcsAccessToken = await getAccessToken(userId)
+      if (whmcsAccessToken === undefined) {
+        const whmcs = await this.#generateWHMCSUrl(userId);
+        const url = whmcs.url
+        const token = whmcs.token
+        await storeWhmcsToDiscord(token, userId)
+        this.res.redirect(url);
+        return
+      }
+
+      const json = await this.#getUserInfo(whmcsAccessToken);
+      const products = Object.keys(json["products"]).length
+
+      const metadata = {
+        halvexservices: products
+      };
+
+      await this.#pushMetadata(userId, discordAccessToken, metadata);
+
     } catch (e) {
-      e.message = `Error fetching external data: ${e.message}`;
-      console.error(e);
+      this.res.sendStatus(500);
     }
 
-    await this.#pushMetadata(userId, tokens, metadata);
+  }
+
+  async #getUserInfo(token) {
+    const params = new URLSearchParams();
+    params.append("action", "GetClientsProducts");
+    params.append("identifier", config.WHMCS_API_IDENTIFIER);
+    params.append("secret", config.WHMCS_API_SECRET);
+    params.append("responsetype", "json");
+    const url = config.WHMCS_API_ENDPOINT + "?" + params;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await response.text();
+    return JSON.parse(json);
+  }
+
+  async #generateWHMCSUrl(userId) {
+    const whmcs = this.#generateWHMCSAntiForgeryToken();
+    await setAccessToken(userId, whmcs);
+    const params = await this.#createURLSearchParams(whmcs);
+    return {
+      url: config.WHMCS_AUTHORIZE_ENDPOINT + "?" + params,
+      token: whmcs
+    };
+  }
+
+  async #createURLSearchParams(token) {
+    const state = `security_token%3D${token}%26url%3D${DISCORD_VERIFICATION_URL}`;
+    const scope = "openid%20profile%20email";
+    return `client_id=${config.WHMCS_OPENID_CLIENT_ID}&response_type=code&scope=${scope}&redirect_uri=${WHMCS_CODE_URL}&state=${state}`;
+  }
+
+  #generateWHMCSAntiForgeryToken() {
+    return crypto.randomBytes(32).toString("hex");
   }
 
   async #pushMetadata(userId, tokens, metadata) {
@@ -56,7 +116,7 @@ export default class Request {
       body,
       headers
     );
-
+    console.log(await response.json())
     if (!response.ok) {
       throw new Error(
         `Error pushing discord metadata: [${response.status}] ${response.statusText}`
@@ -88,11 +148,11 @@ export default class Request {
 
   async #getAccessToken(userId, tokens) {
     const now = Date.now();
-    const expire = tokens.discord_token.discord.expires_at;
+    const expire = tokens.expires_at;
     if (now > expire) {
       return await this.#handleExpiredToken(tokens, userId);
     }
-    return tokens.discord_token.discord.access_token;
+    return tokens.access_token;
   }
 
   async #handleExpiredToken(tokens, userId) {
@@ -111,7 +171,7 @@ export default class Request {
     const tokens = await response.json();
     const now = Date.now();
     tokens.expires_at = now + tokens['expires_in'] * 1000;
-    await storage.storeToken(userId, tokens);
+    await storage.storeDiscordToken(userId, tokens);
     return tokens.access_token;
   }
 
