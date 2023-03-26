@@ -14,7 +14,7 @@ export default class WHMCSTokenRequest extends Request {
       const code = query.code
       const state = await this.#checkValidState(code);
       if (!state) {
-        this.res.sendStatus("The token provided is invalid!");
+        return this.res.sendStatus(403);
       }
       const securityToken = await this.#getSecurityToken(query)
       const userId = await getWhmcsToDiscord(securityToken)

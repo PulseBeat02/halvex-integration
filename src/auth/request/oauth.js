@@ -20,6 +20,7 @@ export default class OAuthCallbackRequest extends Request {
       await this.#storeTokens(userId, tokens, now);
       await this.updateMetadata(userId);
     } catch (e) {
+      console.log(e)
       this.res.sendStatus(500);
     }
   }

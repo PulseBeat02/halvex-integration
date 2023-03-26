@@ -51,6 +51,7 @@ export default class Request {
       };
       await this.#pushMetadata(userId, discordAccessToken, metadata);
     } catch (e) {
+      console.log(e)
       this.res.sendStatus(500);
     }
   }
@@ -109,7 +110,7 @@ export default class Request {
         `Error pushing discord metadata: [${response.status}] ${response.statusText}`
       );
     }
-    this.req.send("Succesfully linked Halvex with Discord! Go back into your Discord to enjoy your role!")
+    this.res.sendFile("success.html", {root: "./" })
   }
 
   #fetchMetaDataResponse(url, method, body, headers) {

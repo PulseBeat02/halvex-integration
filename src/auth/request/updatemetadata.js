@@ -11,6 +11,7 @@ export default class UpdateMetaDataRequest extends Request {
       await this.updateMetadata(userId);
       this.res.sendStatus(204);
     } catch (e) {
+      console.log(e)
       this.res.sendStatus(500);
     }
   }
