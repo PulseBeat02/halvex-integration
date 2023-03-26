@@ -21,6 +21,4 @@ export default async function createRequest() {
       "Authorization": `Bot ${config.DISCORD_TOKEN}`,
     },
   });
-
-  console.log(response.ok ? await response.json() : await response.text());
 }
