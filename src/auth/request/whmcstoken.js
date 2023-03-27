@@ -1,6 +1,6 @@
 import Request from "./request.js";
 import fetch from "node-fetch";
-import config, { WHMCS_CODE_URL } from "../../config.js";
+import config from "../../config.js";
 import {getWhmcsToDiscord, setAccessToken} from "../storage.js";
 
 export default class WHMCSTokenRequest extends Request {
@@ -38,7 +38,7 @@ export default class WHMCSTokenRequest extends Request {
     params.append("code", query);
     params.append("client_id", config.WHMCS_OPENID_CLIENT_ID);
     params.append("client_secret", config.WHMCS_OPENID_CLIENT_SECRET);
-    params.append("redirect_uri", WHMCS_CODE_URL);
+    params.append("redirect_uri", config.WHMCS_CODE_URL);
     params.append("grant_type", "authorization_code");
     const code = await fetch(config.WHMCS_API_TOKEN_ENDPOINT, {
       method: "POST",

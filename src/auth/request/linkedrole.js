@@ -23,7 +23,7 @@ export default class LinkedRoleRequest extends Request {
   #generateParameters(state) {
     const url = new URL(config.DISCORD_OAUTH_AUTHORIZE_ENDPOINT);
     url.searchParams.set("client_id", config.DISCORD_CLIENT_ID);
-    url.searchParams.set("redirect_uri", config.DISCORD_REDIRECT_URI);
+    url.searchParams.set("redirect_uri", config.REDIRECT_URL);
     url.searchParams.set("response_type", "code");
     url.searchParams.set("state", state);
     url.searchParams.set("scope", "role_connections.write identify");

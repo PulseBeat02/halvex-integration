@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import * as storage from "../storage.js";
-import config, {DISCORD_VERIFICATION_URL, WHMCS_CODE_URL} from "../../config.js";
+import config from "../../config.js";
 import crypto from "crypto";
 import {getAccessToken, setAccessToken, storeWhmcsToDiscord} from "../storage.js";
 
@@ -83,9 +83,9 @@ export default class Request {
   }
 
   async #createURLSearchParams(token) {
-    const state = `security_token%3D${token}%26url%3D${DISCORD_VERIFICATION_URL}`;
+    const state = `security_token%3D${token}%26url%3D${config.VERIFICATION_URL}`;
     const scope = "openid%20profile%20email";
-    return `client_id=${config.WHMCS_OPENID_CLIENT_ID}&response_type=code&scope=${scope}&redirect_uri=${WHMCS_CODE_URL}&state=${state}`;
+    return `client_id=${config.WHMCS_OPENID_CLIENT_ID}&response_type=code&scope=${scope}&redirect_uri=${config.WHMCS_CODE_URL}&state=${state}`;
   }
 
   #generateWHMCSAntiForgeryToken() {
