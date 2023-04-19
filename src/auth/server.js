@@ -1,11 +1,11 @@
-import express from "express";
-import cookieParser from "cookie-parser";
-import LinkedRoleRequest from "./request/linkedrole.js";
-import UpdateMetaDataRequest from "./request/updatemetadata.js";
-import OAuthCallbackRequest from "./request/oauth.js";
-import WHMCSTokenRequest from "./request/whmcstoken.js";
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import LinkedRoleRequest from './request/linkedrole.js';
+import UpdateMetaDataRequest from './request/updatemetadata.js';
+import OAuthCallbackRequest from './request/oauth.js';
+import WHMCSTokenRequest from './request/whmcstoken.js';
 
-import config from "../config.js";
+import config from '../config.js';
 
 export default class AuthenticationServer {
   constructor() {}
@@ -25,28 +25,28 @@ export default class AuthenticationServer {
   }
 
   #addLinkedRole() {
-    this.app.get("/linked-role", async (req, res) => {
+    this.app.get('/linked-role', async (req, res) => {
       const request = new LinkedRoleRequest(req, res);
       await request.handleRequest();
     });
   }
 
   #addOauthCallback() {
-    this.app.get("/discord-oauth-callback", async (req, res) => {
+    this.app.get('/discord-oauth-callback', async (req, res) => {
       const request = new OAuthCallbackRequest(req, res);
       await request.handleRequest();
     });
   }
 
   #addOauthMetaData() {
-    this.app.post("/update-metadata", async (req, res) => {
+    this.app.post('/update-metadata', async (req, res) => {
       const request = new UpdateMetaDataRequest(req, res);
       await request.handleRequest();
     });
   }
 
   #confirmWHMCSToken() {
-    this.app.get("/code", async (req, res) => {
+    this.app.get('/code', async (req, res) => {
       const request = new WHMCSTokenRequest(req, res);
       await request.handleRequest();
     });

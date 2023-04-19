@@ -1,6 +1,6 @@
-import Request from "./request.js";
-import crypto from "crypto";
-import config from "../../config.js";
+import Request from './request.js';
+import crypto from 'crypto';
+import config from '../../config.js';
 
 const MAX_AGE = 1000 * 60 * 5;
 export default class LinkedRoleRequest extends Request {
@@ -10,7 +10,7 @@ export default class LinkedRoleRequest extends Request {
 
   handleRequest() {
     const { url, state } = this.#getOAuthUrl();
-    this.res.cookie("clientState", state, { maxAge: MAX_AGE, signed: true });
+    this.res.cookie('clientState', state, { maxAge: MAX_AGE, signed: true });
     this.res.redirect(url);
   }
 
@@ -22,12 +22,12 @@ export default class LinkedRoleRequest extends Request {
 
   #generateParameters(state) {
     const url = new URL(config.DISCORD_OAUTH_AUTHORIZE_ENDPOINT);
-    url.searchParams.set("client_id", config.DISCORD_CLIENT_ID);
-    url.searchParams.set("redirect_uri", config.REDIRECT_URL);
-    url.searchParams.set("response_type", "code");
-    url.searchParams.set("state", state);
-    url.searchParams.set("scope", "role_connections.write identify");
-    url.searchParams.set("prompt", "consent");
+    url.searchParams.set('client_id', config.DISCORD_CLIENT_ID);
+    url.searchParams.set('redirect_uri', config.REDIRECT_URL);
+    url.searchParams.set('response_type', 'code');
+    url.searchParams.set('state', state);
+    url.searchParams.set('scope', 'role_connections.write identify');
+    url.searchParams.set('prompt', 'consent');
     return url;
   }
 }

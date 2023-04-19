@@ -1,7 +1,7 @@
-import Request from "./request.js";
-import * as storage from "../storage.js";
-import config from "../../config.js";
-import fetch from "node-fetch";
+import Request from './request.js';
+import * as storage from '../storage.js';
+import config from '../../config.js';
+import fetch from 'node-fetch';
 export default class OAuthCallbackRequest extends Request {
   constructor(req, res) {
     super(req, res);
@@ -12,7 +12,7 @@ export default class OAuthCallbackRequest extends Request {
       if (this.#verifyCookies()) {
         return this.res.sendStatus(403);
       }
-      const code = this.req.query["code"];
+      const code = this.req.query['code'];
       const tokens = await this.getOAuthTokens(code);
       const meData = await this.getUserData(tokens);
       const userId = meData.user.id;
@@ -26,10 +26,10 @@ export default class OAuthCallbackRequest extends Request {
   }
 
   #verifyCookies() {
-    const discordState = this.req.query["state"];
-    const { clientState } = this.req["signedCookies"];
+    const discordState = this.req.query['state'];
+    const { clientState } = this.req['signedCookies'];
     if (clientState !== discordState) {
-      console.error("State verification failed.");
+      console.error('State verification failed.');
       return true;
     }
   }
@@ -38,7 +38,7 @@ export default class OAuthCallbackRequest extends Request {
     await storage.storeDiscordToken(userId, {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
-      expires_at: now + tokens["expires_in"] * 1000,
+      expires_at: now + tokens['expires_in'] * 1000,
     });
   }
 
@@ -61,7 +61,7 @@ export default class OAuthCallbackRequest extends Request {
     return new URLSearchParams({
       client_id: config.DISCORD_CLIENT_ID,
       client_secret: config.DISCORD_CLIENT_SECRET,
-      grant_type: "authorization_code",
+      grant_type: 'authorization_code',
       code,
       redirect_uri: config.REDIRECT_URL,
     });

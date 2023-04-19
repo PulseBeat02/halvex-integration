@@ -1,8 +1,8 @@
-import fetch from "node-fetch";
-import * as storage from "../storage.js";
-import config from "../../config.js";
-import crypto from "crypto";
-import {getAccessToken, setAccessToken, storeWhmcsToDiscord} from "../storage.js";
+import fetch from 'node-fetch';
+import * as storage from '../storage.js';
+import config from '../../config.js';
+import crypto from 'crypto';
+import {getAccessToken, setAccessToken, storeWhmcsToDiscord} from '../storage.js';
 
 export default class Request {
   constructor(req, res) {
@@ -13,7 +13,7 @@ export default class Request {
   handleRequest() {}
 
   getResponse(url, body) {
-    const method = "POST";
+    const method = 'POST';
     const headers = this.#getResponseHeaders();
     return this.#fetchResponse(url, body, method, headers);
   }
@@ -28,7 +28,7 @@ export default class Request {
 
   #getResponseHeaders() {
     return {
-      "Content-Type": "application/x-www-form-urlencoded",
+      'Content-Type': 'application/x-www-form-urlencoded',
     };
   }
   async updateMetadata(userId) {
@@ -44,7 +44,7 @@ export default class Request {
         return
       }
       const json = await this.#getUserInfo(whmcsAccessToken);
-      const products = Object.keys(json["products"]).length
+      const products = Object.keys(json['products']).length
       const metadata = {
         halvexservices: products
       };
@@ -57,15 +57,15 @@ export default class Request {
 
   async #getUserInfo(token) {
     const params = new URLSearchParams();
-    params.append("action", "GetClientsProducts");
-    params.append("identifier", config.WHMCS_API_IDENTIFIER);
-    params.append("secret", config.WHMCS_API_SECRET);
-    params.append("responsetype", "json");
-    const url = config.WHMCS_API_ENDPOINT + "?" + params;
+    params.append('action', 'GetClientsProducts');
+    params.append('identifier', config.WHMCS_API_IDENTIFIER);
+    params.append('secret', config.WHMCS_API_SECRET);
+    params.append('responsetype', 'json');
+    const url = config.WHMCS_API_ENDPOINT + '?' + params;
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
     const json = await response.text();
@@ -77,25 +77,25 @@ export default class Request {
     await setAccessToken(userId, whmcs);
     const params = await this.#createURLSearchParams(whmcs);
     return {
-      url: config.WHMCS_AUTHORIZE_ENDPOINT + "?" + params,
+      url: config.WHMCS_AUTHORIZE_ENDPOINT + '?' + params,
       token: whmcs
     };
   }
 
   async #createURLSearchParams(token) {
     const state = `security_token%3D${token}%26url%3D${config.VERIFICATION_URL}`;
-    const scope = "openid%20profile%20email";
+    const scope = 'openid%20profile%20email';
     return `client_id=${config.WHMCS_OPENID_CLIENT_ID}&response_type=code&scope=${scope}&redirect_uri=${config.WHMCS_CODE_URL}&state=${state}`;
   }
 
   #generateWHMCSAntiForgeryToken() {
-    return crypto.randomBytes(32).toString("hex");
+    return crypto.randomBytes(32).toString('hex');
   }
 
   async #pushMetadata(userId, tokens, metadata) {
     const url = `https://discord.com/api/v10/users/@me/applications/${config.DISCORD_CLIENT_ID}/role-connection`;
     const accessToken = await this.#getAccessToken(userId, tokens);
-    const method = "PUT";
+    const method = 'PUT';
     const body = JSON.stringify(this.#getMetaDataBody(metadata));
     const headers = this.#getMetaDataHeaders(accessToken);
     const response = await this.#fetchMetaDataResponse(
@@ -109,7 +109,7 @@ export default class Request {
         `Error pushing discord metadata: [${response.status}] ${response.statusText}`
       );
     }
-    this.res.sendFile("success.html", {root: "./" })
+    this.res.sendFile('success.html', {root: './' })
   }
 
   #fetchMetaDataResponse(url, method, body, headers) {
@@ -123,13 +123,13 @@ export default class Request {
   #getMetaDataHeaders(accessToken) {
     return {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     };
   }
 
   #getMetaDataBody(metadata) {
     return {
-      platform_name: "Halvex Linker Bot",
+      platform_name: 'Halvex Linker Bot',
       metadata,
     };
   }
@@ -167,7 +167,7 @@ export default class Request {
     return new URLSearchParams({
       client_id: config.DISCORD_CLIENT_ID,
       client_secret: config.DISCORD_CLIENT_SECRET,
-      grant_type: "refresh_token",
+      grant_type: 'refresh_token',
       refresh_token: tokens.refresh_token,
     });
   }
