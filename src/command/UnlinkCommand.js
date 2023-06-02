@@ -1,16 +1,20 @@
-import {SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, Events} from 'discord.js'
-import {getAccessToken, getDiscordToken} from './../auth/storage.js'
-import client from './../index.js'
+import {ActionRowBuilder, ButtonBuilder, Events} from 'discord.js'
+import {getAccessToken, getDiscordToken} from '../auth/storage.js'
+import client from '../index.js'
 import config from '../config.js';
 import fetch from 'node-fetch';
+import Command from "./Command.js";
 
-export default {
-    data: new SlashCommandBuilder()
-        .setName('unlink')
-        .setDescription('Unlinks your Discord account from the Halvex panel'),
+export default class UnlinkCommand extends Command {
+
+    constructor() {
+        super("unlink", "Unlinks your Discord account from the Halvex panel");
+    }
+
     async execute(interaction) {
         await this.handleInteraction(interaction)
-    },
+    }
+
     async handleInteraction(interaction) {
         const user = interaction.user
         if (!await this.checkExists(user)) {
@@ -29,7 +33,8 @@ export default {
         client.on(Events.InteractionCreate, interaction => this.handleButtonInteraction(interaction));
         const content = 'Are you sure you want to unlink your Discord account from the Halvex panel?'
         await interaction.reply({content: content, components: [row]}, true)
-    },
+    }
+
     async handleButtonInteraction(interaction) {
         if (!interaction.isButton()) {
             return;
@@ -39,10 +44,12 @@ export default {
         } else if (interaction.customId === 'no') {
             await this.handleLink(interaction)
         }
-    },
+    }
+
     async handleLink(interaction) {
         interaction.reply({content: 'Cancelled unlinking process!', ephemeral: true})
-    },
+    }
+
     async handleUnlink(interaction) {
         const url = `https://discord.com/api/v10/users/@me/applications/${config.DISCORD_CLIENT_ID}/role-connection`;
         const user = interaction.user
@@ -77,27 +84,31 @@ export default {
                 ephemeral: true
             })
         }
-    },
-    getMetaDataHeaders(accessToken) {
+    }
+
+    async getMetaDataHeaders(accessToken) {
         return {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         };
-    },
-    fetchMetaDataResponse(url, method, body, headers) {
+    }
+
+    async fetchMetaDataResponse(url, method, body, headers) {
         return fetch(url, {
             method: method,
             body: body,
             headers: headers,
         });
-    },
-    getMetaDataBody() {
+    }
+
+    async getMetaDataBody() {
         return {
             platform_name: 'Halvex Linker Bot',
             halvexservices: 0,
         };
-    },
-    checkExists(user) {
+    }
+
+    async checkExists(user) {
         return getAccessToken(user.userId)
     }
 }
