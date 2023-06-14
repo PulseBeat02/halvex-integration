@@ -39,7 +39,7 @@ export default class UnlinkCommand extends Command {
         await interaction.reply({embeds: [embed], components: [row], ephemeral: true})
     }
 
-    async createEmbedMessage(description) {
+    createEmbedMessage(description) {
         return new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('Halvex Unlinking')
