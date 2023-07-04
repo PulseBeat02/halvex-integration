@@ -59,3 +59,8 @@ function decrypt(ciphertext) {
   const decipher = crypto.createDecipheriv(algorithm, key, vector);
   return decipher.update(ciphertext, 'hex', 'utf-8') + decipher.final('utf8');
 }
+
+// Write a function that converts all the maps into json files
+function deserialize() {
+
+}

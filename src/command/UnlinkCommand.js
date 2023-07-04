@@ -1,8 +1,6 @@
 import {ActionRowBuilder, ButtonBuilder, EmbedBuilder, Events} from 'discord.js'
-import {getAccessToken, getDiscordToken} from '../auth/storage.js'
+import {getAccessToken} from '../auth/storage.js'
 import client from '../index.js'
-import config from '../config.js';
-import fetch from 'node-fetch';
 import Command from "./Command.js";
 
 export default class UnlinkCommand extends Command {
@@ -19,10 +17,12 @@ export default class UnlinkCommand extends Command {
 
     async handleInteraction(interaction) {
         const user = interaction.user
-        // if (!await this.checkExists(user)) {
-        //     await interaction.reply({content: 'You are not linked to a Halvex account.', ephemeral: true})
-        //     return
-        // }
+        const id = await this.checkExists(user)
+        if (id == null) {
+            const embed = this.createEmbedMessage('You have not linked your Discord account to the Halvex panel yet!')
+            await interaction.reply({embeds: [embed], ephemeral: true})
+            return
+        }
         const yes = new ButtonBuilder()
             .setCustomId('yes')
             .setLabel('Yes')
@@ -42,9 +42,9 @@ export default class UnlinkCommand extends Command {
     createEmbedMessage(description) {
         return new EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle('Halvex Unlinking')
+            .setTitle('Halvex')
             .setAuthor({
-                name: 'Halvex Unlinking',
+                name: 'Halvex Linker Bot',
                 iconURL: 'https://halvex.net/img/header/logo.png',
                 url: 'https://halvex.net/index.html'
             })
@@ -71,14 +71,7 @@ export default class UnlinkCommand extends Command {
     }
 
     async handleUnlink(interaction) {
-        const url = `https://discord.com/api/v10/users/@me/applications/${config.DISCORD_CLIENT_ID}/role-connection`;
         const user = interaction.member
-        const userId = user.userId
-        const accessToken = getDiscordToken(userId)
-        const method = 'PUT';
-        const body = JSON.stringify(this.getMetaDataBody());
-        const headers = this.getMetaDataHeaders(accessToken);
-        const response = await this.fetchMetaDataResponse(url, method, body, headers);
         let role;
         for (const roles of user.roles.cache) {
             if (roles.name === 'Active Client') {
@@ -88,42 +81,15 @@ export default class UnlinkCommand extends Command {
         if (role !== undefined) {
             await user.roles.delete(role)
         }
-        if (response.ok) {
-            const embed = this.createEmbedMessage('Your Discord account has been unlinked from the Halvex panel!')
-            await this.originalInteraction.editReply({
-                embeds: [embed],
-                components: [],
-                ephemeral: true
-            })
-        } else {
-            const embed = this.createEmbedMessage('There was an error unlinking your Discord account from the Halvex panel. Please try again later.')
-            await this.originalInteraction.editReply({
-                embeds: [embed],
-                components: [],
-                ephemeral: true
-            })
-        }
-    }
-
-    async getMetaDataHeaders(accessToken) {
-        return {
-            Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json',
-        };
-    }
-
-    async fetchMetaDataResponse(url, method, body, headers) {
-        return fetch(url, {
-            method: method, body: body, headers: headers,
-        });
-    }
-
-    async getMetaDataBody() {
-        return {
-            platform_name: 'Halvex Linker Bot', halvexservices: 0,
-        };
+        const embed = this.createEmbedMessage('Your Discord account has been unlinked from the Halvex panel!')
+        await this.originalInteraction.editReply({
+            embeds: [embed],
+            components: [],
+            ephemeral: true
+        })
     }
 
     async checkExists(user) {
-        return getAccessToken(user.userId)
+        return getAccessToken(user.id)
     }
 }
