@@ -12,7 +12,7 @@ const key = crypto.randomBytes(32);
 export async function setAccessToken(userId, whmcs) {
     const encrypted = encrypt(JSON.stringify(whmcs));
     whmcsAccessTokens.set(`whmcs-${userId}`, encrypted);
-    deserialize()
+    serialize()
 }
 
 export async function getAccessToken(userId) {
@@ -24,10 +24,10 @@ export async function getAccessToken(userId) {
     return JSON.parse(token);
 }
 
-export async function setDiscordToken(userId, discord) {
+export async function storeDiscordToken(userId, discord) {
     const encrypted = encrypt(JSON.stringify(discord));
     discordAccessTokens.set(`discord-${userId}`, encrypted)
-    deserialize()
+    serialize()
 }
 
 export async function getDiscordToken(userId) {
@@ -39,10 +39,10 @@ export async function getDiscordToken(userId) {
     return JSON.parse(token);
 }
 
-export async function setWhmcsToDiscord(whmcsToken, userId) {
+export async function storeWhmcsToDiscord(whmcsToken, userId) {
     const encrypted = encrypt(JSON.stringify(userId));
     whmcsToDiscord.set(`convert-${whmcsToken}`, encrypted);
-    deserialize()
+    serialize()
 }
 
 export async function getWhmcsToDiscord(whmcsToken) {
@@ -79,11 +79,11 @@ export function serialize() {
 export function deserialize() {
     FileSystem.readFile('discord.json', (error, data) => {
         if (error) throw error
-        whmcsToDiscord = handleData(data)
+        discordAccessTokens = handleData(data)
     });
     FileSystem.readFile('whmcs.json', (error, data) => {
         if (error) throw error
-        whmcsToDiscord = handleData(data)
+        whmcsAccessTokens = handleData(data)
     });
     FileSystem.readFile('conversion.json', (error, data) => {
         if (error) throw error
