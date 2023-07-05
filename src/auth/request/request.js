@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as storage from '../storage.js';
 import config from '../../config.js';
 import crypto from 'crypto';
-import {getAccessToken, setAccessToken, storeWhmcsToDiscord} from '../storage.js';
+import {getAccessToken, setAccessToken, setWhmcsToDiscord} from '../storage.js';
 
 export default class Request {
   constructor(req, res) {
@@ -39,7 +39,7 @@ export default class Request {
         const whmcs = await this.#generateWHMCSUrl(userId);
         const url = whmcs.url
         const token = whmcs.token
-        await storeWhmcsToDiscord(token, userId)
+        await setWhmcsToDiscord(token, userId)
         this.res.redirect(url);
         return
       }
@@ -159,7 +159,7 @@ export default class Request {
     const tokens = await response.json();
     const now = Date.now();
     tokens.expires_at = now + tokens['expires_in'] * 1000;
-    await storage.storeDiscordToken(userId, tokens);
+    await storage.setDiscordToken(userId, tokens);
     return tokens.access_token;
   }
 

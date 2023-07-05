@@ -35,7 +35,7 @@ export default class OAuthCallbackRequest extends Request {
   }
 
   async #storeTokens(userId, tokens, now) {
-    await storage.storeDiscordToken(userId, {
+    await storage.setDiscordToken(userId, {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       expires_at: now + tokens['expires_in'] * 1000,
