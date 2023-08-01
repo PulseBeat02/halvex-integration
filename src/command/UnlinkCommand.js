@@ -1,5 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, EmbedBuilder, Events} from 'discord.js'
-import {getAccessToken} from '../auth/storage.js'
+import {checkDiscordUserExists, getAccessToken, getDiscordToken} from '../auth/storage.js'
 import client from '../index.js'
 import Command from "./Command.js";
 
@@ -17,8 +17,8 @@ export default class UnlinkCommand extends Command {
 
     async handleInteraction(interaction) {
         const user = interaction.user
-        const id = await this.checkExists(user)
-        if (id == null) {
+        const verified = await this.checkRole(user)
+        if (!verified) {
             const embed = this.createEmbedMessage('You have not linked your Discord account to the Halvex panel yet!')
             await interaction.reply({embeds: [embed], ephemeral: true})
             return
@@ -89,7 +89,13 @@ export default class UnlinkCommand extends Command {
         })
     }
 
-    async checkExists(user) {
-        return getAccessToken(user.id)
+    async checkRole(interaction) {
+        const user = interaction.member
+        for (const roles of user.roles.cache) {
+            if (roles.name === 'Active Client') {
+                return true
+            }
+        }
+        return false
     }
 }
