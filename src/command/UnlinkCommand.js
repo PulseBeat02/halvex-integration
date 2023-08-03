@@ -1,5 +1,5 @@
 import {ActionRowBuilder, ButtonBuilder, EmbedBuilder, Events} from 'discord.js'
-import {checkDiscordUserExists, getAccessToken, getDiscordToken} from '../auth/storage.js'
+import {getAccessToken, getDiscordToken} from '../auth/storage.js'
 import client from '../index.js'
 import Command from "./Command.js";
 
