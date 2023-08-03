@@ -16,8 +16,7 @@ export default class UnlinkCommand extends Command {
     }
 
     async handleInteraction(interaction) {
-        const user = interaction.user
-        const verified = await this.checkRole(user)
+        const verified = await this.checkRole(interaction)
         if (!verified) {
             const embed = this.createEmbedMessage('You have not linked your Discord account to the Halvex panel yet!')
             await interaction.reply({embeds: [embed], ephemeral: true})
