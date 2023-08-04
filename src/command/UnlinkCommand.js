@@ -3,8 +3,6 @@ import Command from "./Command.js";
 
 export default class UnlinkCommand extends Command {
 
-    originalInteraction
-
     constructor() {
         super("unlink", "Unlinks your Discord account from the Halvex panel");
     }
@@ -36,7 +34,6 @@ export default class UnlinkCommand extends Command {
                 "After confirming, Discord will revoke the access for Halvex, and your Halvex Account will be unlinked from your Discord account.\n" +
                 "\n" +
                 "Please note that unlinking your Halvex Account from Discord will disconnect any integrations or functionalities between the two platforms.")
-        this.originalInteraction = interaction
         await interaction.reply({embeds: [embed], ephemeral: true})
     }
 
