@@ -1,8 +1,9 @@
 import crypto from 'crypto';
+import NodeCache from 'node-cache';
 
-const discordAccessTokens = new Map();
-const whmcsAccessTokens = new Map()
-const whmcsToDiscord = new Map();
+const discordAccessTokens = new NodeCache();
+const whmcsAccessTokens = new NodeCache()
+const whmcsToDiscord = new NodeCache();
 
 const algorithm = 'aes-256-cbc';
 const vector = crypto.randomBytes(16);
@@ -10,7 +11,7 @@ const key = crypto.randomBytes(32);
 
 export async function setAccessToken(userId, whmcs) {
   const encrypted = encrypt(JSON.stringify(whmcs));
-  whmcsAccessTokens.set(`whmcs-${userId}`, encrypted);
+  whmcsAccessTokens.set(`whmcs-${userId}`, encrypted, 300);
 }
 
 export async function getAccessToken(userId) {
@@ -24,7 +25,7 @@ export async function getAccessToken(userId) {
 
 export async function storeDiscordToken(userId, discord) {
   const encrypted = encrypt(JSON.stringify(discord));
-    discordAccessTokens.set(`discord-${userId}`, encrypted)
+    discordAccessTokens.set(`discord-${userId}`, encrypted, 300)
 }
 
 export async function getDiscordToken(userId) {
@@ -38,7 +39,7 @@ export async function getDiscordToken(userId) {
 
 export async function storeWhmcsToDiscord(whmcsToken, userId) {
     const encrypted = encrypt(JSON.stringify(userId));
-    whmcsToDiscord.set(`convert-${whmcsToken}`, encrypted);
+    whmcsToDiscord.set(`convert-${whmcsToken}`, encrypted, 300);
 }
 
 export async function getWhmcsToDiscord(whmcsToken) {
