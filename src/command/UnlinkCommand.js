@@ -1,6 +1,4 @@
-import {ActionRowBuilder, ButtonBuilder, EmbedBuilder, Events} from 'discord.js'
-import {getAccessToken, getDiscordToken} from '../auth/storage.js'
-import client from '../index.js'
+import {EmbedBuilder} from 'discord.js'
 import Command from "./Command.js";
 
 export default class UnlinkCommand extends Command {
@@ -22,26 +20,30 @@ export default class UnlinkCommand extends Command {
             await interaction.reply({embeds: [embed], ephemeral: true})
             return
         }
-        const yes = new ButtonBuilder()
-            .setCustomId('yes')
-            .setLabel('Yes')
-            .setStyle('Success')
-        const no = new ButtonBuilder()
-            .setCustomId('no')
-            .setLabel('No')
-            .setStyle('Danger')
-        const row = new ActionRowBuilder().addComponents(yes, no);
-        client.on(Events.InteractionCreate, interaction => this.handleButtonInteraction(interaction));
         const embed =
-            this.createEmbedMessage('Are you sure you want to unlink your Discord account from the Halvex panel?')
+            this.createEmbedMessage("To unlink a Halvex Account from Discord, follow these steps:\n" +
+                "\n" +
+                "Navigate to User Settings >>> Authorized Apps\n" +
+                "\n" +
+                "In the \"Authorized Apps\" section, you'll see a list of all the third-party applications and services linked to your Discord account.\n" +
+                "\n" +
+                "Look for the entry related to Halvex in the list of authorized apps. It should have the Halvex logo or name next to it.\n" +
+                "\n" +
+                "Once you've identified the Halvex entry, click on \"Deauthorize\".\n" +
+                "\n" +
+                "Discord will then prompt you to confirm the action. Click \"Confirm\" or \"Yes\" to proceed with the unlinking process.\n" +
+                "\n" +
+                "After confirming, Discord will revoke the access for Halvex, and your Halvex Account will be unlinked from your Discord account.\n" +
+                "\n" +
+                "Please note that unlinking your Halvex Account from Discord will disconnect any integrations or functionalities between the two platforms.")
         this.originalInteraction = interaction
-        await interaction.reply({embeds: [embed], components: [row], ephemeral: true})
+        await interaction.reply({embeds: [embed], ephemeral: true})
     }
 
     createEmbedMessage(description) {
         return new EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle('Halvex')
+            .setTitle('Halvex Unlinking Guide')
             .setAuthor({
                 name: 'Halvex Linker Bot',
                 iconURL: 'https://halvex.net/img/header/logo.png',
@@ -51,50 +53,8 @@ export default class UnlinkCommand extends Command {
             .setTimestamp()
     }
 
-    async handleButtonInteraction(interaction) {
-        if (!interaction.isButton()) {
-            return;
-        }
-        if (interaction.customId === 'yes') {
-            await this.handleUnlink(interaction)
-        } else if (interaction.customId === 'no') {
-            await this.handleLink()
-        }
-    }
-
-    async handleLink() {
-        const embed = this.createEmbedMessage('Cancelled unlinking process!')
-        await this.originalInteraction.editReply({
-            embeds: [embed], components: [], ephemeral: true
-        })
-    }
-
-    async handleUnlink(interaction) {
-        const user = interaction.member
-        let role;
-        for (const roles of user.roles.cache) {
-            if (roles.name === 'Active Client') {
-                role = roles
-            }
-        }
-        if (role !== undefined) {
-            await user.roles.delete(role)
-        }
-        const embed = this.createEmbedMessage('Your Discord account has been unlinked from the Halvex panel!')
-        await this.originalInteraction.editReply({
-            embeds: [embed],
-            components: [],
-            ephemeral: true
-        })
-    }
-
     async checkRole(interaction) {
-        const user = interaction.member
-        for (const roles of user.roles.cache) {
-            if (roles.name === 'Active Client') {
-                return true
-            }
-        }
-        return false
+        const user = await interaction.guild.members.fetch(interaction.user.id)
+        return user.roles.cache.has('1070703004795277392')
     }
 }

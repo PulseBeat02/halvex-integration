@@ -3,12 +3,13 @@ import createRequest from './auth/register.js';
 import config from './config.js';
 import {Client, Collection, Events, GatewayIntentBits, REST, Routes} from 'discord.js'
 import UnlinkCommand from "./command/UnlinkCommand.js";
+import LinkCommand from "./command/LinkCommand.js";
 
 const client = new Client({intents: [GatewayIntentBits.Guilds]});
 await client.login(config.DISCORD_TOKEN);
 client.commands = new Collection();
 
-const registeredCommands = [new UnlinkCommand()]
+const registeredCommands = [new UnlinkCommand(), new LinkCommand()]
 const commands = []
 for (const index in registeredCommands) {
     const cmd = registeredCommands[index]
